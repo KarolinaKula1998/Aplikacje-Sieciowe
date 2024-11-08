@@ -1,0 +1,64 @@
+{extends file="../templates/main.html"}
+
+{block name=footer}{/block}
+
+{block name=content}
+
+<h2 class="content-head is-center">Kalkulator kredytowy</h2>
+
+<div class="pure-g">
+<div class="l-box-lrg pure-u-1 pure-u-med-2-5">
+	<form class="pure-form pure-form-stacked" action="{$app_url}/app/calc.php" method="post">
+		<fieldset>
+		<label for="kwota">Kwota kredytu o którą się ubiegasz </label>
+		<input id="kwota" type="text" placeholder="kwota" name="kwota" value="{$form['kwota']}">
+		<label for="oprocentowanie">Oprocentowanie kredytu w % </label>
+		<input id="oprocentowanie" type="text" placeholder="oprocentowanie" name="oprocentowanie" value="{$form['oprocentowanie']}">
+		<label for="okres">Czas kredytowania w miesiącach </label>
+		<input id="okres" type="text" placeholder="okres" name="okres" value="{$form['okres']}">
+		<button type="submit" class="pure-button pure-button-primary">Oblicz</button>
+		</fieldset>	
+	</form>
+</div>
+
+<div class="l-box-lrg pure-u-1 pure-u-med-3-5">
+
+{* wyświeltenie listy błędów, jeśli istnieją *}
+{if isset($messages)}
+	{if count($messages) > 0} 
+		<h4>Wystąpiły błędy: </h4>
+		<ol class="err">
+		{foreach  $messages as $msg}
+		{strip}
+			<li>{$msg}</li>
+		{/strip}
+		{/foreach}
+		</ol>
+	{/if}
+{/if}
+
+{* wyświeltenie listy informacji, jeśli istnieją *}
+{if isset($infos)}
+	{if count($infos) > 0} 
+		<h4>Informacje: </h4>
+		<ol class="inf">
+		{foreach  $infos as $msg}
+		{strip}
+			<li>{$msg}</li>
+		{/strip}
+		{/foreach}
+		</ol>
+	{/if}
+{/if}
+
+{if isset($rata)}
+	<h4>Rata:</h4>
+	<p class="res">
+	{$rata}
+	</p>
+{/if}
+
+</div>
+</div>
+
+{/block}
