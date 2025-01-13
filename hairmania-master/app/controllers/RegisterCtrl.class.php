@@ -2,7 +2,7 @@
 
 namespace app\controllers;
 
-use app\forms\LoginForm;
+use app\forms\RegisterForm;
 use PDOException;
 
 class RegisterCtrl
@@ -12,50 +12,61 @@ class RegisterCtrl
     public function __construct()
     {
         //stworzenie potrzebnych obiektów
-        $this->form = new LoginForm();
+        $this->form = new RegisterForm();
     }
 
     public function validate()
     {
-        $this->form->login = getFromRequest('login');
+        $this->form->email = getFromRequest('email');
         $this->form->pass = getFromRequest('pass');
+        $this->form->phone = getFromRequest('phone');
+        $this->form->name = getFromRequest('name');
+        $this->form->surname = getFromRequest('surname');
 
-        //nie ma sensu walidować dalej, gdy brak parametrów
-        if (!isset($this->form->login)) return false;
+        getValidation()->validateEmail($this->form->email);
+        getValidation()->validatePassword($this->form->pass);
+        getValidation()->validatePhone($this->form->phone);
+        getValidation()->validateName($this->form->name);
+        getValidation()->validateSurname($this->form->surname);
 
-        // sprawdzenie, czy potrzebne wartości zostały przekazane
-        if (empty($this->form->login)) {
-            getMessages()->addError('Nie podano loginu');
-        }
-        if (empty($this->form->pass)) {
-            getMessages()->addError('Nie podano hasła');
-        }
-
-        //nie ma sensu walidować dalej, gdy brak wartości
-        if (getMessages()->isError()) return false;
-        return true;
+        // Jeśli są błędy, zatrzymaj walidację
+        return !getMessages()->isError();
     }
 
     public function action_register()
     {
         if ($this->validate()) {
             $userRoleId = 2;
+            $passwordHash = password_hash($this->form->pass, PASSWORD_DEFAULT);
 
             try {
                 getDB()->insert("users", [
-                    "email" => $this->form->login,
-                    "password" => $this->form->pass,
-                    "role_id" => $userRoleId
+                    "email" => $this->form->email,
+                    "password" => $passwordHash,
+                    "role_id" => $userRoleId,
+                    "phone_number" => $this->form->phone,
+                    "name" => $this->form->name,
+                    "surname" => $this->form->surname,
                 ]);
-                redirectTo("accountShow");
+
+                $this->loginAfterRegistration($this->form->email, $this->form->pass);
             } catch (PDOException $e) {
                 getMessages()->addError('Wystąpił nieoczekiwany błąd podczas zapisu rekordu');
                 if (getConf()->debug) getMessages()->addError($e->getMessage());
+                $this->generateView();
             }
         } else {
             //niezalogowany => pozostań na stronie logowania
             $this->generateView();
         }
+    }
+
+    private function loginAfterRegistration($email, $password)
+    {
+        $loginCtrl = new LoginCtrl();
+        $_POST['email'] = $email;
+        $_POST['pass'] = $password;
+        $loginCtrl->action_login();
     }
 
     public function action_registerShow()

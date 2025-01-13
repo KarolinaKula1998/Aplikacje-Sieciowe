@@ -7,8 +7,20 @@
             <fieldset>
                 <legend>Dane osoby</legend>
                 <div class="pure-control-group">
-                    <label for="email">E-mail</label>
-                    <input id="email" type="text" placeholder="E-mail" name="email" value="{$form->email}">
+                    <label for="id_email">E-mail</label>
+                    <input id="id_email" type="text" placeholder="E-mail" name="email" value="{$form->email}">
+                </div>
+                <div class="pure-control-group">
+                    <label for="id_name">Imię</label>
+                    <input id="id_name" type="text" placeholder="Imię" name="name" value="{$form->name}">
+                </div>
+                <div class="pure-control-group">
+                    <label for="id_surname">Nazwisko</label>
+                    <input id="id_surname" type="text" placeholder="Nazwisko" name="surname" value="{$form->surname}">
+                </div>
+                <div class="pure-control-group">
+                    <label for="id_phone">Telefon</label>
+                    <input id="id_phone" type="text" placeholder="Telefon" name="phone" value="{$form->phone}">
                 </div>
                 <div class="pure-control-group">
                     <label for="roleId">Rola</label>

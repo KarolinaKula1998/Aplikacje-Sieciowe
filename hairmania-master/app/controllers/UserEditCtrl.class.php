@@ -25,17 +25,16 @@ class UserEditCtrl
 		$this->form->id = getFromRequest('id', true, 'Błędne wywołanie aplikacji');
 		$this->form->email = getFromRequest('email', true, 'Błędne wywołanie aplikacji');
 		$this->form->roleId = getFromRequest('roleId', true, 'Błędne wywołanie aplikacji');
+		$this->form->name = getFromRequest('name', true, 'Błędne wywołanie aplikacji');
+		$this->form->surname = getFromRequest('surname', true, 'Błędne wywołanie aplikacji');
+		$this->form->phone = getFromRequest('phone', true, 'Błędne wywołanie aplikacji');
 
 		if (getMessages()->isError()) return false;
 
-		// 1. sprawdzenie czy wartości wymagane nie są puste
-		if (empty(trim($this->form->email))) {
-			getMessages()->addError('Wprowadź email');
-		}
-
-		if (empty(trim($this->form->roleId))) {
-			getMessages()->addError('Wprowadź rolę');
-		}
+		getValidation()->validateEmail($this->form->email);
+		getValidation()->validatePhone($this->form->phone);
+		getValidation()->validateName($this->form->name);
+		getValidation()->validateSurname($this->form->surname);
 
 		if (getMessages()->isError()) return false;
 
@@ -59,6 +58,12 @@ class UserEditCtrl
 	//wysiweltenie rekordu do edycji wskazanego parametrem 'id'
 	public function action_userEdit()
 	{
+		if (!getCommonFunctions()->isAdmin()) {
+			getMessages()->addError("Brak uprawnień do przeglądania listy osób.");
+			redirectTo('homeShow');
+			return;
+		}
+
 		// 1. walidacja id osoby do edycji
 		if ($this->validateEdit()) {
 			try {
@@ -69,6 +74,9 @@ class UserEditCtrl
 				$this->form->id = $record['id'];
 				$this->form->email = $record['email'];
 				$this->form->roleId = $record['role_id'];
+				$this->form->name = $record['name'];
+				$this->form->surname = $record['surname'];
+				$this->form->phone = $record['phone_number'];
 			} catch (PDOException $e) {
 				getMessages()->addError('Wystąpił błąd podczas odczytu rekordu');
 				if (getConf()->debug) getMessages()->addError($e->getMessage());
@@ -81,6 +89,11 @@ class UserEditCtrl
 
 	public function action_userDelete()
 	{
+		if (!(getCommonFunctions()->isAdmin())) {
+			getMessages()->addError("Brak uprawnień administratora");
+			redirectTo('homeShow');
+			return;
+		}
 		// 1. walidacja id osoby do usuniecia
 		if ($this->validateEdit()) {
 
@@ -102,6 +115,11 @@ class UserEditCtrl
 
 	public function action_userSave()
 	{
+		if (!(getCommonFunctions()->isAdmin())) {
+			getMessages()->addError("Brak uprawnień administratora");
+			redirectTo('homeShow');
+			return;
+		}
 		// 1. Walidacja danych formularza (z pobraniem)
 		if ($this->validateSave()) {
 			// 2. Zapis danych w bazie
@@ -109,7 +127,10 @@ class UserEditCtrl
 				//2.2 Edycja rekordu o danym ID
 				getDB()->update("users", [
 					"email" => $this->form->email,
-					"role_id" => $this->form->roleId
+					"role_id" => $this->form->roleId,
+					"name" => $this->form->name,
+					"surname" => $this->form->surname,
+					"phone_number" => $this->form->phone,
 				], [
 					"id" => $this->form->id
 				]);

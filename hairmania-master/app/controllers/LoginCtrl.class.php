@@ -17,15 +17,15 @@ class LoginCtrl
 
 	public function validate()
 	{
-		$this->form->login = getFromRequest('login');
+		$this->form->email = getFromRequest('email');
 		$this->form->pass = getFromRequest('pass');
 
 		//nie ma sensu walidować dalej, gdy brak parametrów
-		if (!isset($this->form->login)) return false;
+		if (!isset($this->form->email)) return false;
 
 		// sprawdzenie, czy potrzebne wartości zostały przekazane
-		if (empty($this->form->login)) {
-			getMessages()->addError('Nie podano loginu');
+		if (empty($this->form->email)) {
+			getMessages()->addError('Nie podano adresu e-mail');
 		}
 		if (empty($this->form->pass)) {
 			getMessages()->addError('Nie podano hasła');
@@ -47,15 +47,15 @@ class LoginCtrl
 		if ($this->validate()) {
 			try {
 				$user = getDB()->get("users", "*", [
-					"email" => $this->form->login,
-					"password" => $this->form->pass,
+					"email" => $this->form->email
 				]);
-				if ($user) {
+				if ($user && password_verify($this->form->pass, $user['password'])) {
 					// Logowanie udane, zapisz ID użytkownika w sesji
 					$_SESSION['user'] = [
 						'id' => $user['id'],
 						'email' => $user['email'],
 						'role_id' => $user['role_id'],
+						'name' => $user['name'],
 					];
 
 					getMessages()->addInfo("Zalogowano pomyślnie.");

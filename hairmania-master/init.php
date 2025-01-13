@@ -83,6 +83,24 @@ function &getDB()
 
 require_once 'core/functions.php';
 
+require_once 'core/Validation.class.php';
+$validation = new core\Validation();
+function &getValidation()
+{
+    global $validation;
+    return $validation;
+}
+
+require_once 'core/CommonFunctions.class.php';
+$common = new core\CommonFunctions();
+function &getCommonFunctions()
+{
+    global $common;
+    return $common;
+}
+
+
+
 session_start(); //uruchom lub kontynuuj sesję
 $conf->roles = isset($_SESSION['_roles']) ? unserialize($_SESSION['_roles']) : array(); //wczytaj role
 

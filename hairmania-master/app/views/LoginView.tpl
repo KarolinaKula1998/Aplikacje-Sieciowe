@@ -5,11 +5,11 @@
 		<legend>Logowanie do systemu</legend>
 		<fieldset>
 			<div class="pure-control-group">
-				<label for="id_login">login: </label>
-				<input id="id_login" type="text" name="login" value="{$form->login}" />
+				<label for="id_email">E-mail: </label>
+				<input id="id_email" type="text" name="email" value="{$form->email}" />
 			</div>
 			<div class="pure-control-group">
-				<label for="id_pass">pass: </label>
+				<label for="id_pass">Hasło: </label>
 				<input id="id_pass" type="password" name="pass" /><br />
 			</div>
 			<div class="pure-controls">

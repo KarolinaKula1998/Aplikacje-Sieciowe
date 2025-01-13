@@ -23,5 +23,9 @@ getRouter()->addRoute('logout',            'LoginCtrl');
 getRouter()->addRoute('userEdit',        'UserEditCtrl');
 getRouter()->addRoute('userSave',        'UserEditCtrl');
 getRouter()->addRoute('userDelete',    'UserEditCtrl');
+getRouter()->addRoute('homeShow',    'HomeCtrl');
+getRouter()->addRoute('testShow',    'TestCtrl');
+getRouter()->addRoute('resultShow',    'ResultCtrl');
+getRouter()->addRoute('resultDelete',    'AccountCtrl');
 
 getRouter()->go();
